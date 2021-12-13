@@ -1,8 +1,8 @@
 import { useState } from 'react'
+import { FiTrash, FiCheckSquare } from 'react-icons/fi'
+import toast from 'react-hot-toast';
 
 import '../styles/tasklist.scss'
-
-import { FiTrash, FiCheckSquare } from 'react-icons/fi'
 
 interface Task {
   id: number;
@@ -16,18 +16,45 @@ export function TaskList() {
 
   function handleCreateNewTask() {
     // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
+    if(newTaskTitle!='') {
+      const task:Task = {
+        id: Math.floor(Math.random() * 10000000),
+        title: newTaskTitle,
+        isComplete: false
+      }
+
+      setTasks([...tasks, task]);
+    } else {
+      toast.error('Defina um título para a nova task!');
+    }
   }
 
   function handleToggleTaskCompletion(id: number) {
     // Altere entre `true` ou `false` o campo `isComplete` de uma task com dado ID
+    const taskToToggle = tasks.find((task:Task) => task.id===id);
+    
+    if(taskToToggle) {
+      if(taskToToggle.isComplete===true) {
+        taskToToggle.isComplete = false;
+      } else {
+        taskToToggle.isComplete = true;
+      }
+    }
+    setTasks([...tasks]);
   }
 
   function handleRemoveTask(id: number) {
     // Remova uma task da listagem pelo ID
+    const filteredTasks = tasks.filter((task)=>{
+      return task.id != id;
+    });
+
+    setTasks(filteredTasks);
   }
 
   return (
     <section className="task-list container">
+      
       <header>
         <h2>Minhas tasks</h2>
 
